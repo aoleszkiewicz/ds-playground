@@ -1,0 +1,22 @@
+[project]
+name = "ds-dl"
+version = "0.1.0"
+description = "Shared kernel: PyTorch deep learning stack na bazie ds-core."
+requires-python = ">=3.13"
+dependencies = [
+    "ds-core",
+    "torch>=2.5",
+    "torchvision>=0.20",
+    "torchaudio>=2.5",
+    "h5py>=3.16.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ds_dl"]
+
+[tool.uv.sources]
+ds-core = { workspace = true }
