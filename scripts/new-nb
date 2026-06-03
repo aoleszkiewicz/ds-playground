@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Tworzy pusty notebook z kernelspec dobranym automatycznie na podstawie sciezki.
+# Mapowanie:
+#   foundations/**           -> ds-core
+#   classical-ml/islr/**     -> ds-islr
+#   classical-ml/**          -> ds-core
+#   deep-learning/mini-llms/** lub sciezka zawierajaca "llm" -> ds-llm
+#   deep-learning/**         -> ds-dl
+#
+# Uzycie:
+#   scripts/new-nb foundations/math-in-ml/eksperyment.ipynb
+#   scripts/new-nb deep-learning/pytorch-book/transformer.ipynb
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Uzycie: $0 <sciezka/do/notebook[.ipynb]>" >&2
+  exit 1
+fi
+
+target="$1"
+[[ "$target" == *.ipynb ]] || target="${target}.ipynb"
+
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+rel="${target#"$repo_root"/}"
+
+case "$rel" in
+  foundations/*)               kernel="ds-core" ;;
+  classical-ml/islr/*)         kernel="ds-islr" ;;
+  classical-ml/*)              kernel="ds-core" ;;
+  deep-learning/mini-llms/*)   kernel="ds-llm" ;;
+  *llm*|*LLM*)                 kernel="ds-llm" ;;
+  deep-learning/*)             kernel="ds-dl" ;;
+  *)
+    echo "Nie umiem dobrac kernela dla: $rel" >&2
+    echo "Dodaj regule w scripts/new-nb albo trzymaj sie kategorii." >&2
+    exit 2
+    ;;
+esac
+
+if [[ -e "$target" ]]; then
+  echo "Plik juz istnieje: $target" >&2
+  exit 3
+fi
+
+mkdir -p "$(dirname "$target")"
+
+cat > "$target" <<EOF
+{
+ "cells": [],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python ($kernel)",
+   "language": "python",
+   "name": "$kernel"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
+EOF
+
+echo "Utworzono $target (kernel: $kernel)"

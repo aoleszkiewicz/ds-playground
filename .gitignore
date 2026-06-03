@@ -1,0 +1,21 @@
+# venvs
+.venv/
+**/.venv/
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# system
+.DS_Store
+
+# data & artifacts
+*.pth
+*.pt
+*.h5
+*.hdf5
+**/data/raw/
+**/data/processed/
+**/data/MNIST/
